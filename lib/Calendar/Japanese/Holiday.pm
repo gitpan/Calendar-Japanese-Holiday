@@ -13,7 +13,7 @@ our @ISA = qw(Exporter);
 
 our @EXPORT = qw(getHolidays isHoliday);
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 our $FurikaeStr = '振替';
@@ -400,7 +400,7 @@ $furikae is same as getHolidays().
 
 =head1 SEE ALSO
 
-http://wiki.bit-hive.com/tomizoo/pg/Perl%20%B5%D9%C6%FC%CC%BE%A4%CE%BC%E8%C6%C0
+http://wiki.bit-hive.com/tomizoo/pg/Perl%20%BD%CB%C6%FC%CC%BE%A4%CE%BC%E8%C6%C0
 
 (In Japanese document)
 
