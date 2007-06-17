@@ -13,16 +13,15 @@ our @ISA = qw(Exporter);
 
 our @EXPORT = qw(getHolidays isHoliday);
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 
 our $FurikaeStr = '振替';
 
-my @StaticHoliday;
-
+my @StaticHoliday = (
 # 4/29 みどりの日 => 昭和の日 変更
 # みどりの日は5/4に移行
-push @StaticHoliday, {'start' => 2007, 'end' => 2999,
+		     {'start' => 2007, 'end' => 2999,
 		      'days' => {1  => { 1 => '元日'},
 				 2  => {11 => '建国記念の日'},
 				 4  => {29 => '昭和の日'},
@@ -33,9 +32,9 @@ push @StaticHoliday, {'start' => 2007, 'end' => 2999,
 					23 => '勤労感謝の日'},
 				 12 => {23 => '天皇誕生日'},
 				},
-		     };
+		     },
 # 海の日,敬老の日がHappy Mondayに
-push @StaticHoliday,  {'start' => 2003, 'end' => 2006,
+		     {'start' => 2003, 'end' => 2006,
 		       'days' => {1  => { 1 => '元日'},
 				  2  => {11 => '建国記念の日'},
 				  4  => {29 => 'みどりの日'},
@@ -45,9 +44,9 @@ push @StaticHoliday,  {'start' => 2003, 'end' => 2006,
 					 23 => '勤労感謝の日'},
 				  12 => {23 => '天皇誕生日'},
 				 },
-		      };
+		     },
 # 成人の日,体育の日がHappy Mondayに
-push @StaticHoliday, {'start' => 2000, 'end' => 2002,
+		     {'start' => 2000, 'end' => 2002,
 		      'days' => {1  => { 1 => '元日'},
 				 2  => {11 => '建国記念の日'},
 				 4  => {29 => 'みどりの日'},
@@ -59,9 +58,9 @@ push @StaticHoliday, {'start' => 2000, 'end' => 2002,
 					 23 => '勤労感謝の日'},
 				 12 => {23 => '天皇誕生日'},
 				},
-		     };
+		     },
 # 海の日追加
-push @StaticHoliday, {'start' => 1996, 'end' => 1999,
+		     {'start' => 1996, 'end' => 1999,
 		      'days' => {1  => { 1 => '元日',
 					15 => '成人の日'},
 				 2  => {11 => '建国記念の日'},
@@ -75,10 +74,10 @@ push @StaticHoliday, {'start' => 1996, 'end' => 1999,
 					 23 => '勤労感謝の日'},
 				 12 => {23 => '天皇誕生日'},
 				},
-		     };
+		     },
 # 天皇誕生日変更 4/29 => 12/23
 # 旧天皇誕生日をみどりの日に変更
-push @StaticHoliday, {'start' => 1989, 'end' => 1995,
+		     {'start' => 1989, 'end' => 1995,
 		      'days' => {1  => { 1 => '元日',
 					15 => '成人の日'},
 				 2  => {11 => '建国記念の日'},
@@ -91,8 +90,9 @@ push @StaticHoliday, {'start' => 1989, 'end' => 1995,
 					23 => '勤労感謝の日'},
 				 12 => {23 => '天皇誕生日'},
 				},
-		     };
-push @StaticHoliday, {'start' => 1970, 'end' => 1988,
+		     },
+# 建国記念の日追加
+		     {'start' => 1967, 'end' => 1988,
 		      'days' => {1  => { 1 => '元日',
 					15 => '成人の日'},
 				 2  => {11 => '建国記念の日'},
@@ -104,7 +104,45 @@ push @StaticHoliday, {'start' => 1970, 'end' => 1988,
 				 11 => { 3 => '文化の日',
 					23 => '勤労感謝の日'},
 				},
-		     };
+		     },
+# 敬老の日,体育の日追加
+		     {'start' => 1966, 'end' => 1966,
+		      'days' => {1  => { 1 => '元日',
+					15 => '成人の日'},
+				 4  => {29 => '天皇誕生日'},
+				 5  => { 3 => '憲法記念日',
+					 5 => 'こどもの日'},
+				 9  => {15 => '敬老の日'},
+				 10 => {10 => '体育の日'},
+				 11 => { 3 => '文化の日',
+					23 => '勤労感謝の日'},
+				},
+		     },
+# 国民の祝日に関する法律に定められた祝日のうち7/20以前のものを追加
+		     {'start' => 1949, 'end' => 1965,
+		      'days' => {1  => { 1 => '元日',
+					15 => '成人の日'},
+				 4  => {29 => '天皇誕生日'},
+				 5  => { 3 => '憲法記念日',
+					 5 => 'こどもの日'},
+				 11 => { 3 => '文化の日',
+					23 => '勤労感謝の日'},
+				},
+		     },
+# 国民の祝日に関する法律 1948/7/20制定
+		     {'start' => 1948, 'end' => 1948,
+		      'days' => {11 => { 3 => '文化の日',
+					23 => '勤労感謝の日'},
+				},
+		     },
+		    );
+
+my %ExceptionalHoliday = (
+			  195904 => {10 => '皇太子明仁親王の結婚の儀'},
+			  198902 => {24 => '昭和天皇の大喪の礼'},
+			  199011 => {12 => '即位礼正殿の儀'},
+			  199306 => { 9 => '皇太子徳仁親王の結婚の儀'},
+			 );
 
 my @daysInMonth = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
 
@@ -215,6 +253,8 @@ sub furikae_days {
 
     my %days;
 
+    return \%days if $year < 1973;
+
     while (my ($h_day, $name) = each %$holidays_tbl) {
 	# 祝日が日曜日かチェック
 	my $wday = (localtime(timelocal(0, 0, 0, $h_day, $mon - 1, $year)))[6];
@@ -264,6 +304,13 @@ sub getHolidays {
     if ($mon == 3) {$holidays{shunbun_day($year)} = '春分の日';}
     if ($mon == 9) {$holidays{shuubun_day($year)} = '秋分の日';}
 
+    # 例外的なもの
+    my $yymm = sprintf("%04d%02d", $year, $mon);
+    if (exists $ExceptionalHoliday{$yymm}) {
+	while (my ($day, $name) = each %{$ExceptionalHoliday{$yymm}}) {
+	    $holidays{$day} = $name;
+	}
+    }
 
     # 国民の休日
     if ($year >= 1986) {
@@ -358,7 +405,7 @@ Returns a hash reference that has holidays in $year/$month.
 Returns empty hash reference if no holidays.
 It returns substitute holidays too if $furikae is true.
 $furikae is false when $furikae is omitted.
-$year is supported after 1970. A undef is returned if error ocucred.
+$year is supported after 1948. A undef is returned if error ocucred.
 
  # Case 1 - $furikae is omitted
  $holidays = getHolidays(2008, 5);
